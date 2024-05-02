@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Quản Lý</title>
+    <!-- Link CSS của Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Tùy chỉnh CSS */
+        .sidebar {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .btn-group {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Thanh menu -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Trang Quản Lý</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"> </span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Thanh sidebar -->
+            <div class="col-md-3 p-3">
+                <h3 class="mb-4">Admin</h3>
+                <ul class="nav flex-column">
+                    <li class="nav-item"><a class="nav-link btn btn-light w-100 mb-2" href="#"
+                            th:onclick="showEmployees()"> Quản Lý Nhân Viên </a></li>
+                    <li class="nav-item "><a class="nav-link btn btn-light w-100" href="#"
+                            th:onclick="showProducts()"> Quản Lý Sản Phẩm </a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-light w-100 mt-2" href="#"
+                            th:onclick="showProducts()"> Thống Kê Doanh Thu </a></li>
+                </ul>
+            </div>
+
+
+            <!-- Nội dung chính -->
+            <div class="content col-md-8">
+                <div id="employeesTable" class="">
+                    <h1 class="">Danh Sách Nhân Viên</h1>
+                    <form action="/category/create" method="post" class="row mt-3">
+                        <div class="row justify-content-between">
+                            <div class="col-md-4">
+                                <!-- Các input ở cột trái -->
+                                <div class="mb-3">
+                                    <input type="text" name="id" placeholder="Mã nhân viên"
+                                        value="${account.username}" class="form-control" />
+                                </div>
+                                <div class="mb-3">
+                                    <input type="text" name="name" placeholder="Tên nhân viên"
+                                        value="${account.fullname}" class="form-control" />
+                                </div>
+                                <div class="mb-3">
+                                    <input type="text" name="password" placeholder="Mật Khẩu"
+                                        value="${account.password}" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <!-- Các input ở cột phải -->
+                                <div class="mb-3">
+                                    <input type="text" name="Activated" placeholder="Trạng thái"
+                                        value="${account.activated == true ? 'còn hoạt động' : 'không hoạt động'}"
+                                        class="form-control" />
+                                </div>
+                                <div class="mb-3">
+                                    <input type="text" name="Activated" placeholder="Chức vụ"
+                                        value="${account.admin == true ? 'admin' : 'user' }"
+                                        class="form-control" />
+                                </div>
+                                <div class="mb-3">
+                                    <input type="text" name="email" placeholder="Email"
+                                        value="${account.email}" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <img src="/images/products/product3.png" class="card-img-top mx-auto d-block mt-2"
+                                        style="max-width: 150px;" alt="...">
+                                    <div class="card-body"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 d-flex ">
+                                <div class="btn-group">
+                                    <button type="submit" class="btn btn-primary">Create</button>
+                                    <button type="submit" class="btn btn-secondary">Update</button>
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                    <button type="submit" class="btn btn-warning">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table class="mt-4 table table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="width: 100px;">Username</th>
+                                <th style="width: 100px;">Password</th>
+                                <th style="width: 150px;">Full Name</th>
+                                <th style="width: 150px;">Email</th>
+                                <th style="width: 100px;">Photo</th>
+                                <th style="width: 100px;">Activated</th>
+                                <th style="width: 100px;">Admin</th>
+                                <th style="width: 100px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="acc : ${accounts}">
+                                <td th:text="${acc.username}"></td>
+                                <td th:text="${acc.password}"></td>
+                                <td th:text="${acc.fullname}"></td>
+                                <td th:text="${acc.email}"></td>
+                                <td th:text="${acc.photo}"></td>
+                                <td th:text="${acc.activated == true ? 'còn hoạt động' : 'không hoạt động'}"></td>
+                                <td th:text="${acc.admin == true ? 'admin' : 'user'}"></td>
+                                <td><a th:href="@{'/account/edit/?id=' + ${acc.username}}"><i
+                                            class="bi bi-pencil-square"></i> Edit</a>
+                                    <button type="button"><i class="bi bi-trash"></i> Delete</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="productsTable" class="hidden">
+                    <h1 class="">Danh Sách Sản Phẩm</h1>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Tên Sản Phẩm</th>
+                                <th scope="col">Giá</th>
+                                <th scope="col">Số Lượng</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="ca : ${categoryItems}">
+                                <td th:text="${ca.id}"></td>
+                                <td th:text="${ca.name}"></td>
+                                <td>
+                                    <a th:href="@{'/category/edit?id=' + ${ca.id}}">
+                                        <i class="bi bi-pencil-square text-success me-2"></i>
+                                    </a>
+                                    <a th:href="@{'/category/delete?id=' + ${ca.id}}">
+                                        <i class="bi bi-trash text-danger"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Link JS của Bootstrap 5 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        function showEmployees() {
+            document.getElementById("employeesTable").classList.remove("hidden");
+            document.getElementById("productsTable").classList.add("hidden");
+        }
+
+        function showProducts() {
+            document.getElementById("employeesTable").classList.add("hidden");
+            document.getElementById("productsTable").classList.remove("hidden");
+        }
+    </script>
+</body>
+
+</html>
